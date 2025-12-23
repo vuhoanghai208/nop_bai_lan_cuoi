@@ -642,7 +642,18 @@ const App: React.FC = () => {
           return response.blob();
         })
         .then(blob => {
-          docx.renderAsync(blob, container);
+          // Cấu hình render để hiển thị đầy đủ nội dung hơn
+          const options = {
+            className: "docx-wrapper",
+            inWrapper: true,
+            ignoreWidth: false,
+            ignoreHeight: false,
+            breakPages: true, // Tách trang để hiển thị giống Word hơn
+            useBase64URL: true, // Hỗ trợ hiển thị hình ảnh tốt hơn
+            experimental: true, // Bật tính năng thử nghiệm để render các element phức tạp
+          };
+          // @ts-ignore
+          docx.renderAsync(blob, container, null, options);
         }).catch(err => {
           console.error("Error rendering docx:", err);
           container.innerHTML = '<p class="text-center text-red-500 p-8">Lỗi: Không thể tải hoặc hiển thị tài liệu. Vui lòng kiểm tra xem file có tồn tại trong thư mục `public/word_text` không.</p>';
@@ -743,7 +754,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Content Viewer (docx-preview library) */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-200">
+            <div className="flex-1 overflow-auto p-4 md:p-8 bg-slate-200">
               <style>{`
                 .docx-wrapper { background-color: white; padding: 2rem 3rem; }
                 .docx-wrapper p { margin-bottom: 1em; line-height: 1.6; color: #334155; }
@@ -757,7 +768,7 @@ const App: React.FC = () => {
                 .docx-wrapper li { margin-bottom: 0.5em; }
                 .docx-wrapper img { max-width: 100%; height: auto; margin-top: 1em; margin-bottom: 1em; }
               `}</style>
-              <div ref={docxContainerRef} className="max-w-3xl mx-auto min-h-full bg-white shadow-lg">
+              <div ref={docxContainerRef} className="max-w-5xl mx-auto min-h-full bg-white shadow-lg">
                 {/* docx-preview will render content here */}
               </div>
             </div>
